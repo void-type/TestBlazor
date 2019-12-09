@@ -1,0 +1,33 @@
+﻿@page "/"
+@using PaymentCalculator.Model
+@inject CalculateLoan.Handler handler
+
+<h1>Calulate Total Paid</h1>
+
+<p>Total Paid: @response.TotalPaid.ToString("C")</p>
+<p>Payment: @response.PaymentPerPeriod.ToString("C")</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="IncrementCount2">Click me</button>
+
+<p class="mt-4">This is calculating a loan of @currentRequest.AssetCost.ToString("C"), @currentRequest.DownPayment.ToString("C") down, @currentRequest.NumberOfYears years, @currentRequest.AnnualInterestRate.ToString("P") APR</p>
+
+@code {
+    private CalculateLoan.Response response = new CalculateLoan.Response(0,0,0,0,0,null);
+    private CalculateLoan.Request currentRequest = new CalculateLoan.Request(0, 0, 0, 0, 0, 0);
+
+    private CalculateLoan.Request request1 = new CalculateLoan.Request(1100m, 10m, 0, 200, 12, 0.05m);
+    private CalculateLoan.Request request2 = new CalculateLoan.Request(3500000m, 12000m, 0, 300, 12, 0.043m);
+
+    private async Task IncrementCount()
+    {
+        currentRequest = request1;
+        response = (await handler.Handle(currentRequest)).Value;
+    }
+
+    private async Task IncrementCount2()
+    {
+        currentRequest = request2;
+        response = (await handler.Handle(currentRequest)).Value;
+    }
+}
